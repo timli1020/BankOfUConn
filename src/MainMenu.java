@@ -94,6 +94,7 @@ public class MainMenu extends JFrame {
                         dispose();
                         break;
                     case "transfer":
+                        new TransferSearchAccount();
                         dispose();
                         break;
                     default:

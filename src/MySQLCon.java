@@ -6,12 +6,14 @@ public class MySQLCon {
     private String password;
     private String mySQLConnectorPath;
     private Connection con;
+    private PreparedStatement preparedStatement;
 
     //constructor for the MySQLCon object
     public MySQLCon() {
         this.username = "root";
         this.password = "eix3OhNg";
         this.mySQLConnectorPath = "jdbc:mysql://localhost:3306/cse4701s20_project2";
+        this.preparedStatement = null;
         this.con = null;
 
         //get the mysql connection
@@ -29,32 +31,20 @@ public class MySQLCon {
 
     //function to insert the account into the account table
     public SQLException createAccount(Account account) {
-        PreparedStatement preparedStatement = null;
         try {
 
             assert this.con != null;
             //query to insert the account/row into the accountt able
             String query = "insert into account(name_on_account, balance) " +
                     "values(?, ?)";
-            preparedStatement = this.con.prepareStatement(query);
-            preparedStatement.setString(1, account.getName());
-            preparedStatement.setInt(2, account.getBalance());
+            this.preparedStatement = this.con.prepareStatement(query);
+            this.preparedStatement.setString(1, account.getName());
+            this.preparedStatement.setInt(2, account.getBalance());
 
-            preparedStatement.execute();
+            this.preparedStatement.execute();
 
         } catch (SQLException error) {
             return error;
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (this.con != null) {
-                try {
-                    this.con.close();
-                } catch (SQLException e) { /* ignored */}
-            }
         }
         return null;
     }
@@ -64,14 +54,13 @@ public class MySQLCon {
         Statement stmt;
         ResultSet rs = null;
         Account account;
-        PreparedStatement preparedStatement = null;
         try {
             assert this.con != null;
             //query to select the account from the table where the account_no = user input
             String query = "select * from account where account_no = ? for share";
-            preparedStatement = this.con.prepareStatement(query);
-            preparedStatement.setInt(1, accountNumber);
-            rs = preparedStatement.executeQuery();
+            this.preparedStatement = this.con.prepareStatement(query);
+            this.preparedStatement.setInt(1, accountNumber);
+            rs = this.preparedStatement.executeQuery();
 
             String name = null;
             int balance = 0;
@@ -91,22 +80,6 @@ public class MySQLCon {
             System.out.println("SQLState: " + error.getSQLState());
             System.out.println("VendorError: " + error.getErrorCode());
             return null;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (this.con != null) {
-                try {
-                    this.con.close();
-                } catch (SQLException e) { /* ignored */}
-            }
         }
         return account;
     }
@@ -115,17 +88,16 @@ public class MySQLCon {
         Statement stmt;
         ResultSet rs = null;
         Account account;
-        PreparedStatement preparedStatement = null;
         int newBalance = depositAmount + currentBalance;
 
         try {
             assert this.con != null;
             //query to select balance from the account from the table where the account_no = user input
             String query = "update account set balance = ? where account_no = ?";
-            preparedStatement = this.con.prepareStatement(query);
-            preparedStatement.setInt(1, newBalance);
-            preparedStatement.setInt(2, accountNumber);
-            preparedStatement.executeUpdate();
+            this.preparedStatement = this.con.prepareStatement(query);
+            this.preparedStatement.setInt(1, newBalance);
+            this.preparedStatement.setInt(2, accountNumber);
+            this.preparedStatement.executeUpdate();
 
 
             account = checkBalance(accountNumber);
@@ -135,17 +107,6 @@ public class MySQLCon {
             System.out.println("SQLState: " + error.getSQLState());
             System.out.println("VendorError: " + error.getErrorCode());
             return null;
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (this.con != null) {
-                try {
-                    this.con.close();
-                } catch (SQLException e) { /* ignored */}
-            }
         }
         return account;
     }
@@ -154,16 +115,15 @@ public class MySQLCon {
         Statement stmt;
         ResultSet rs = null;
         Account account;
-        PreparedStatement preparedStatement = null;
         int newBalance = currentBalance - withdrawAmmount;
         try {
             assert this.con != null;
             //query to select balance from the account from the table where the account_no = user input
             String query = "update account set balance = ? where account_no = ?";
-            preparedStatement = this.con.prepareStatement(query);
-            preparedStatement.setInt(1, newBalance);
-            preparedStatement.setInt(2, accountNumber);
-            preparedStatement.executeUpdate();
+            this.preparedStatement = this.con.prepareStatement(query);
+            this.preparedStatement.setInt(1, newBalance);
+            this.preparedStatement.setInt(2, accountNumber);
+            this.preparedStatement.executeUpdate();
 
 
             account = checkBalance(accountNumber);
@@ -173,19 +133,21 @@ public class MySQLCon {
             System.out.println("SQLState: " + error.getSQLState());
             System.out.println("VendorError: " + error.getErrorCode());
             return null;
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (this.con != null) {
-                try {
-                    this.con.close();
-                } catch (SQLException e) { /* ignored */}
-            }
         }
         return account;
+    }
+
+    public void CloseConnection(){
+        if (this.preparedStatement != null) {
+            try {
+                this.preparedStatement.close();
+            } catch (SQLException e) { /* ignored */}
+        }
+        if (this.con != null) {
+            try {
+                this.con.close();
+            } catch (SQLException e) { /* ignored */}
+        }
     }
 }
 

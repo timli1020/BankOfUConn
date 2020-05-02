@@ -46,6 +46,7 @@ public class CreateAccount extends JFrame {
         Account account = new Account(0, name, openingBalance, null);
         MySQLCon mySQLCon = new MySQLCon();
         SQLException error = mySQLCon.createAccount(account);
+        mySQLCon.CloseConnection();
 
         if (error != null) {
             JOptionPane.showMessageDialog(null,

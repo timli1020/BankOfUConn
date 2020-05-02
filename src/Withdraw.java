@@ -49,6 +49,7 @@ public class Withdraw extends JFrame{
     public void WithdrawFromAccount() {
         MySQLCon mySQLCon = new MySQLCon();
         int withdrawAmount = Integer.parseInt(withdrawAmountTextField.getText());
+        mySQLCon.CloseConnection();
 
         if (this.account.getBalance() - withdrawAmount < 0) {
             JOptionPane.showMessageDialog(null,"Insufficient Funds");

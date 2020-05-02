@@ -38,6 +38,7 @@ public class WithdrawSearchAccount extends JFrame{
         int accountNumber = Integer.parseInt(accountNumberTextField.getText());
         MySQLCon mySQLCon = new MySQLCon();
         Account account = mySQLCon.checkBalance(accountNumber);
+        mySQLCon.CloseConnection();
 
         if (account == null) {
             JOptionPane.showMessageDialog(null,"Account Not Found");

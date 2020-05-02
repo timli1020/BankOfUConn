@@ -54,6 +54,7 @@ public class Deposit extends JFrame{
         MySQLCon mySQLCon = new MySQLCon();
         int depositAmount = Integer.parseInt(depositAmountTextField.getText());
         Account account = mySQLCon.Deposit(this.account.getAccountNumber(), depositAmount, this.account.getBalance());
+        mySQLCon.CloseConnection();
         if (account == null){
             JOptionPane.showMessageDialog(null,"An Error Occured");
         } else {
