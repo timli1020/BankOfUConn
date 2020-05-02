@@ -2,15 +2,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AccountSearch extends JFrame {
+public class DepositSearchAccount extends JFrame{
     private JPanel rootPanel;
-    private JLabel accountSearchLabel;
-    private JTextField accountNumberTextField;
+    private JLabel depositLabel;
     private JLabel accountNumberLabel;
-    private JButton searchButton;
+    private JTextField accountNumberTextField;
+    private JButton enterButton;
     private JButton backButton;
 
-    public AccountSearch() {
+    public DepositSearchAccount() {
         setVisible(true);
         add(rootPanel);
         setTitle("Bank of UConn");
@@ -18,24 +18,24 @@ public class AccountSearch extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        //action listener for going back to main menu
+        //action listener is user clicks enter button
+        enterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                launchDepositWindow();
+            }
+        });
+
+        //action listener if user clicks back button
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 goBackToMainMenu();
             }
         });
-
-        //action listener for searching
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                searchAccount();
-            }
-        });
     }
 
-    public void searchAccount() {
+    public void launchDepositWindow() {
         int accountNumber = Integer.parseInt(accountNumberTextField.getText());
         MySQLCon mySQLCon = new MySQLCon();
         Account account = mySQLCon.checkBalance(accountNumber);
@@ -43,7 +43,8 @@ public class AccountSearch extends JFrame {
         if (account == null) {
             JOptionPane.showMessageDialog(null,"Account Not Found");
         } else {
-            DisplayAccount.main(account);
+            new Deposit(account);
+            dispose();
         }
     }
 

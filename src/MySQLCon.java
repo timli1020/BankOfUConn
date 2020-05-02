@@ -68,7 +68,7 @@ public class MySQLCon {
         try {
             assert this.con != null;
             //query to select the account from the table where the account_no = user input
-            String query = "select * from account where account_no = ?";
+            String query = "select * from account where account_no = ? for share";
             preparedStatement = this.con.prepareStatement(query);
             preparedStatement.setInt(1, accountNumber);
             rs = preparedStatement.executeQuery();
@@ -97,6 +97,83 @@ public class MySQLCon {
                     rs.close();
                 } catch (SQLException e) { /* ignored */}
             }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (this.con != null) {
+                try {
+                    this.con.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+        }
+        return account;
+    }
+
+    public Account Deposit(int accountNumber, int depositAmount, int currentBalance) {
+        Statement stmt;
+        ResultSet rs = null;
+        Account account;
+        PreparedStatement preparedStatement = null;
+        int newBalance = depositAmount + currentBalance;
+
+        try {
+            assert this.con != null;
+            //query to select balance from the account from the table where the account_no = user input
+            String query = "update account set balance = ? where account_no = ?";
+            preparedStatement = this.con.prepareStatement(query);
+            preparedStatement.setInt(1, newBalance);
+            preparedStatement.setInt(2, accountNumber);
+            preparedStatement.executeUpdate();
+
+
+            account = checkBalance(accountNumber);
+
+        } catch (SQLException error) {
+            System.out.println("SQLException: " + error.getMessage());
+            System.out.println("SQLState: " + error.getSQLState());
+            System.out.println("VendorError: " + error.getErrorCode());
+            return null;
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+            if (this.con != null) {
+                try {
+                    this.con.close();
+                } catch (SQLException e) { /* ignored */}
+            }
+        }
+        return account;
+    }
+
+    public Account Withdraw(int accountNumber, int withdrawAmmount, int currentBalance) {
+        Statement stmt;
+        ResultSet rs = null;
+        Account account;
+        PreparedStatement preparedStatement = null;
+        int newBalance = currentBalance - withdrawAmmount;
+        try {
+            assert this.con != null;
+            //query to select balance from the account from the table where the account_no = user input
+            String query = "update account set balance = ? where account_no = ?";
+            preparedStatement = this.con.prepareStatement(query);
+            preparedStatement.setInt(1, newBalance);
+            preparedStatement.setInt(2, accountNumber);
+            preparedStatement.executeUpdate();
+
+
+            account = checkBalance(accountNumber);
+
+        } catch (SQLException error) {
+            System.out.println("SQLException: " + error.getMessage());
+            System.out.println("SQLState: " + error.getSQLState());
+            System.out.println("VendorError: " + error.getErrorCode());
+            return null;
+        } finally {
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();

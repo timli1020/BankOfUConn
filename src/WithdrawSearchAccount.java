@@ -2,15 +2,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AccountSearch extends JFrame {
+public class WithdrawSearchAccount extends JFrame{
     private JPanel rootPanel;
-    private JLabel accountSearchLabel;
-    private JTextField accountNumberTextField;
+    private JLabel withdrawLabel;
     private JLabel accountNumberLabel;
-    private JButton searchButton;
+    private JTextField accountNumberTextField;
+    private JButton enterButton;
     private JButton backButton;
 
-    public AccountSearch() {
+    public WithdrawSearchAccount() {
         setVisible(true);
         add(rootPanel);
         setTitle("Bank of UConn");
@@ -18,7 +18,7 @@ public class AccountSearch extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        //action listener for going back to main menu
+        //add action listener for back button
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -26,16 +26,15 @@ public class AccountSearch extends JFrame {
             }
         });
 
-        //action listener for searching
-        searchButton.addActionListener(new ActionListener() {
+        //add action listener for enter button
+        enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                searchAccount();
+                launchWithdrawWindow();
             }
         });
     }
-
-    public void searchAccount() {
+    public void launchWithdrawWindow(){
         int accountNumber = Integer.parseInt(accountNumberTextField.getText());
         MySQLCon mySQLCon = new MySQLCon();
         Account account = mySQLCon.checkBalance(accountNumber);
@@ -43,8 +42,10 @@ public class AccountSearch extends JFrame {
         if (account == null) {
             JOptionPane.showMessageDialog(null,"Account Not Found");
         } else {
-            DisplayAccount.main(account);
+            new Withdraw(account);
+            dispose();
         }
+
     }
 
     //function to go back to the main menu
